@@ -8,9 +8,21 @@ on:
       - 'nextjs-frontend/**'
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      scan_target:
+        description: '分析対象（all/backend/frontend）'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - backend
+          - frontend
 jobs:
   backend-scan:
     name: Backend Analysis
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.scan_target == 'all' || github.event.inputs.scan_target == 'backend'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +60,7 @@ jobs:
 
   frontend-scan:
     name: Frontend Analysis
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.scan_target == 'all' || github.event.inputs.scan_target == 'frontend'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

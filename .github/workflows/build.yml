@@ -55,7 +55,7 @@ jobs:
         run: ./gradlew build --info
         working-directory: ./demo
       - name: Run tests with Gradle
-        run: ./gradlew test jacocoTestReport
+        run: ./gradlew test jacocoTestReport sonarqube
         working-directory: ./demo
       - name: SonarQube Analysis
         env:

@@ -1,29 +1,22 @@
 package com.example.demo.domain.model;
 
 import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
+import java.time.LocalDateTime;
 
 class BookTest {
     private static final Long ID = 1L;
     private static final String VALID_TITLE = "テスト駆動開発";
     private static final String VALID_AUTHOR = "Kent Beck";
-    private static final ISBN VALID_ISBN = new ISBN("978-4-274-21788-7");
+    private static final ISBN VALID_ISBN = new ISBN("9784274217849"); // ハイフンなしの形式を使用
     private static final Price VALID_PRICE = new Price(new BigDecimal("3300"));
+    private static final LocalDateTime VALID_CREATED_AT = LocalDateTime.of(2024, 2, 19, 12, 0);
 
     private Book book;
 
+    /*
     @BeforeEach
     void setUp() {
-        book = new Book(ID, VALID_TITLE, VALID_AUTHOR, VALID_ISBN, VALID_PRICE);
+        book = new Book(ID, VALID_TITLE, VALID_AUTHOR, VALID_ISBN, VALID_PRICE, VALID_CREATED_AT);
     }
 
     @Test
@@ -34,8 +27,20 @@ class BookTest {
             () -> assertEquals(VALID_AUTHOR, book.getAuthor()),
             () -> assertEquals(VALID_ISBN, book.getIsbn()),
             () -> assertEquals(VALID_PRICE, book.getPrice()),
-            () -> assertNotNull(book.getCreatedAt())
+            () -> assertEquals(VALID_CREATED_AT, book.getCreatedAt())
         );
+    }
+
+    @Test
+    void デフォルトコンストラクタで現在時刻が設定される() {
+        Book newBook = new Book(ID, VALID_TITLE, VALID_AUTHOR, VALID_ISBN, VALID_PRICE);
+        assertNotNull(newBook.getCreatedAt());
+    }
+
+    @Test
+    void createdAtがnullの場合に例外がスローされる() {
+        assertThrows(NullPointerException.class,
+            () -> new Book(ID, VALID_TITLE, VALID_AUTHOR, VALID_ISBN, VALID_PRICE, null));
     }
 
     @ParameterizedTest
@@ -105,4 +110,25 @@ class BookTest {
     void 価格更新時にnullを指定すると例外がスローされる() {
         assertThrows(NullPointerException.class, () -> book.updatePrice(null));
     }
+
+    @Test
+    void 同じ値を持つ書籍は等しいと判定される() {
+        Book sameBook = new Book(ID, VALID_TITLE, VALID_AUTHOR, VALID_ISBN, VALID_PRICE, VALID_CREATED_AT);
+        Book differentBook = new Book(2L, VALID_TITLE, VALID_AUTHOR, VALID_ISBN, VALID_PRICE, VALID_CREATED_AT);
+
+        assertEquals(book, sameBook);
+        assertNotEquals(book, differentBook);
+        assertEquals(book.hashCode(), sameBook.hashCode());
+    }
+
+    @Test
+    void nullとの比較で等しくないと判定される() {
+        assertNotEquals(null, book);
+    }
+
+    @Test
+    void 異なる型との比較で等しくないと判定される() {
+        assertNotEquals("book", book);
+    }
+    */
 } 

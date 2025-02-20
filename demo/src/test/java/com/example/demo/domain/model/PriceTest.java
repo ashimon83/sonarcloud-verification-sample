@@ -51,6 +51,14 @@ class PriceTest {
     }
 
     @Test
+    void 減算結果が負の場合に例外がスローされる() {
+        Price price1 = new Price(new BigDecimal("500"));
+        Price price2 = new Price(new BigDecimal("1000"));
+        assertThrows(IllegalArgumentException.class,
+            () -> price1.subtract(price2));
+    }
+
+    @Test
     void 同じ価格は等しいと判定される() {
         Price price1 = new Price(new BigDecimal("1000"));
         Price price2 = new Price(new BigDecimal("1000"));
@@ -71,5 +79,32 @@ class PriceTest {
     void 異なる型との比較で等しくないと判定される() {
         Price price = new Price(new BigDecimal("1000"));
         assertNotEquals(new BigDecimal("1000"), price);
+    }
+
+    @Test
+    void 小数点以下の価格が正しく丸められる() {
+        Price price1 = new Price(new BigDecimal("1000.4"));
+        Price price2 = new Price(new BigDecimal("1000.5"));
+        Price price3 = new Price(new BigDecimal("1000.6"));
+
+        assertEquals(new BigDecimal("1000"), price1.getAmount());
+        assertEquals(new BigDecimal("1001"), price2.getAmount());
+        assertEquals(new BigDecimal("1001"), price3.getAmount());
+    }
+
+    @Test
+    void 小数点以下の価格の加算が正しく丸められる() {
+        Price price1 = new Price(new BigDecimal("1000.3"));
+        Price price2 = new Price(new BigDecimal("500.8"));
+        Price result = price1.add(price2);
+        assertEquals(new BigDecimal("1501"), result.getAmount());
+    }
+
+    @Test
+    void 小数点以下の価格の減算が正しく丸められる() {
+        Price price1 = new Price(new BigDecimal("1000.8"));
+        Price price2 = new Price(new BigDecimal("300.3"));
+        Price result = price1.subtract(price2);
+        assertEquals(new BigDecimal("701"), result.getAmount());
     }
 } 
